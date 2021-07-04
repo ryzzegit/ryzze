@@ -67,22 +67,22 @@ public class BottomNavigationView extends FrameLayout {
         bottomNavigationMenuView.setPresent(present);
 
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.bottom_navigation);
-        if (a.hasValue(R.styleable.bottom_navigation_menu)) {
-            inflateMenu(a.getResourceId(R.styleable.bottom_navigation_menu, 0));
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RyzzeBottomNavigation);
+        if (a.hasValue(R.styleable.RyzzeBottomNavigation_menu)) {
+            inflateMenu(a.getResourceId(R.styleable.RyzzeBottomNavigation_menu, 0));
         }
 
-        if (a.hasValue(R.styleable.bottom_navigation_background_color)) {
-            backgroundColor=a.getColor(R.styleable.bottom_navigation_background_color, ContextCompat.getColor(getContext(),R.color.default_color));
+        if (a.hasValue(R.styleable.RyzzeBottomNavigation_background_color)) {
+            backgroundColor=a.getColor(R.styleable.RyzzeBottomNavigation_background_color, ContextCompat.getColor(getContext(),R.color.default_color));
             setBackgroundColor(backgroundColor);
         }
 
-        if (a.hasValue(R.styleable.bottom_navigation_animation_time)) {
-            bottomNavigationMenuView.setAnimationTime(a.getInt(R.styleable.bottom_navigation_animation_time, 0));
+        if (a.hasValue(R.styleable.RyzzeBottomNavigation_animation_time)) {
+            bottomNavigationMenuView.setAnimationTime(a.getInt(R.styleable.RyzzeBottomNavigation_animation_time, 0));
         }
 
-        if (a.hasValue(R.styleable.bottom_navigation_shifting_mode)) {
-            bottomNavigationMenuView.setFinalShiftingMode(a.getBoolean(R.styleable.bottom_navigation_shifting_mode, false));
+        if (a.hasValue(R.styleable.RyzzeBottomNavigation_shifting_mode)) {
+            bottomNavigationMenuView.setFinalShiftingMode(a.getBoolean(R.styleable.RyzzeBottomNavigation_shifting_mode, false));
 
         }
         setColor();

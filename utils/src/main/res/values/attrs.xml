@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="bottom_navigation">
+    <declare-styleable name="RyzzeBottomNavigation">
         <attr name="menu" format="reference" />
         <attr name="background_color" format="color" />
         <attr name="shifting_mode" format="boolean" />
