@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import static android.view.View.GONE;
-import static com.ryzze.lib.utils.TabAnimator.animateTranslationY;
 
 class Tab {
     private final BottomBarItem item;
@@ -61,11 +60,11 @@ class Tab {
         DrawableCompat.setTint(iconDrawable, activeColor);
         icon.getDrawable().invalidateSelf();
 
-        if (animate) {
-            animateTranslationY(root, activeTopMargin);
-        } else {
-            root.setTranslationY(activeTopMargin);
-        }
+//        if (animate) {
+//            animateTranslationY(root, activeTopMargin);
+//        } else {
+//            root.setTranslationY(activeTopMargin);
+//        }
     }
 
     void deselect(boolean animate) {
@@ -73,11 +72,11 @@ class Tab {
         DrawableCompat.setTint(iconDrawable, inactiveColor);
         icon.getDrawable().invalidateSelf();
 
-        if (animate) {
-            animateTranslationY(root, inactiveTopMargin);
-        } else {
-            root.setTranslationY(inactiveTopMargin);
-        }
+//        if (animate) {
+//            animateTranslationY(root, inactiveTopMargin);
+//        } else {
+//            root.setTranslationY(inactiveTopMargin);
+//        }
     }
 
     private void setupTitle() {

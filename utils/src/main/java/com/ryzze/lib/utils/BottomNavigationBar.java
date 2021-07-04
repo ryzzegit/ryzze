@@ -31,6 +31,7 @@ public class BottomNavigationBar extends LinearLayout {
     @ColorInt
     private int activeColorId;
     private int selectedPosition;
+    private boolean textEnabled;
     private boolean shouldTriggerListenerOnLayout;
 
     private OnSelectListener onSelectListener = new OnSelectListener() {
