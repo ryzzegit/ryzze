@@ -5,11 +5,10 @@ import android.graphics.drawable.Drawable;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-
-import org.jetbrains.annotations.Nullable;
 
 public class BottomBarItem {
     @DrawableRes
