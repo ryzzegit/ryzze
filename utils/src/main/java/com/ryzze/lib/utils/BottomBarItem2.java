@@ -10,7 +10,7 @@ import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
-public class BottomBarItem {
+public class BottomBarItem2 {
 
     @DrawableRes
     private final int iconId;
@@ -19,7 +19,7 @@ public class BottomBarItem {
     @StringRes
     private final int title;
 
-    public BottomBarItem(@DrawableRes int iconId, @StringRes int title) {
+    public BottomBarItem2(@DrawableRes int iconId, @StringRes int title) {
         this.iconId = iconId;
         this.title = title;
         iconDrawable = null;
@@ -28,17 +28,17 @@ public class BottomBarItem {
         }
     }
 
-    public BottomBarItem(@NonNull Drawable iconDrawable, @StringRes int titleId) {
+    public BottomBarItem2(@NonNull Drawable iconDrawable, @StringRes int titleId) {
         this.iconDrawable = iconDrawable;
         this.title = titleId;
         this.iconId = 0;
     }
 
-    public BottomBarItem(@NonNull Drawable iconDrawable) {
+    public BottomBarItem2(@NonNull Drawable iconDrawable) {
         this(iconDrawable, 0);
     }
 
-    public BottomBarItem(@DrawableRes int iconId) {
+    public BottomBarItem2(@DrawableRes int iconId) {
         this(iconId, 0);
     }
 

@@ -64,7 +64,7 @@ public class BottomNavigationBar extends LinearLayout {
     private void createStubForEditMode() {
         if (isInEditMode()) {
             for (int i = 0; i < 4; i++) {
-                addTab(new BottomBarItem(R.drawable.bottom_bar_default_icon));
+                addTab(new BottomBarItem2(R.drawable.bottom_bar_default_icon));
             }
         }
     }
@@ -149,7 +149,7 @@ public class BottomNavigationBar extends LinearLayout {
         a.recycle();
     }
 
-    public BottomNavigationBar addTab(@NonNull BottomBarItem item) {
+    public BottomNavigationBar addTab(@NonNull BottomBarItem2 item) {
         View tabView = inflater.inflate(R.layout.xyz_bottom_bar_item, this, false);
         addView(tabView);
         int position = tabs.size();
@@ -179,7 +179,7 @@ public class BottomNavigationBar extends LinearLayout {
     }
 
     @NonNull
-    private Tab createTab(@NonNull BottomBarItem item, @NonNull View tabView, final int position) {
+    private Tab createTab(@NonNull BottomBarItem2 item, @NonNull View tabView, final int position) {
         Tab tab = new Tab(item, tabView, activeColorId, inactiveColorId);
         tabView.setOnClickListener(new OnClickListener() {
             @Override

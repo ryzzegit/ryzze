@@ -15,7 +15,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import static android.view.View.GONE;
 
 class Tab {
-    private final BottomBarItem item;
+    private final BottomBarItem2 item;
     private final View root;
     private final TextView title;
     private final Context context;
@@ -29,7 +29,7 @@ class Tab {
     private final int inactiveColor;
     private final Drawable iconDrawable;
 
-    Tab(@NonNull BottomBarItem item, @NonNull View root, @ColorInt int activeColor, @ColorInt int inactiveColor) {
+    Tab(@NonNull BottomBarItem2 item, @NonNull View root, @ColorInt int activeColor, @ColorInt int inactiveColor) {
         this.item = item;
         this.root = root;
         context = root.getContext();

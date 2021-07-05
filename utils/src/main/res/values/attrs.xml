@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="RyzzeBottomNavigation">
-        <attr name="menu" format="reference" />
-        <attr name="background_color" format="color" />
-        <attr name="shifting_mode" format="boolean" />
-        <attr name="animation_time" format="integer" />
+    <declare-styleable name="BottomBarItem">
+        <attr name="iconNormal" format="reference"/>
+        <attr name="iconSelected" format="reference"/>
+        <attr name="itemText" format="string"/>
+        <attr name="itemTextSize" format="dimension"/>
+        <attr name="itemTextBold" format="boolean"/>
+        <attr name="textColorNormal" format="color"/>
+        <attr name="textColorSelected" format="color"/>
+        <attr name="itemMarginTop" format="dimension"/>
+        <attr name="iconWidth" format="dimension"/>
+        <attr name="iconHeight" format="dimension"/>
     </declare-styleable>
+
+    <declare-styleable name="BottomItemInputLayout">
+        <attr name="rzz_smoothScroll" format="boolean" />
+    </declare-styleable>
+
     <declare-styleable name="BottomNavigationBar">
         <attr name="rzz_tabNormalColor" format="color" />
         <attr name="rzz_tabSelectedColor" format="color" />
