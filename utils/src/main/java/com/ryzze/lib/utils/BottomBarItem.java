@@ -11,33 +11,39 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 public class BottomBarItem {
+
+    /** Bottom navigation icon id **/
     @DrawableRes
     private final int iconId;
+
+    /** Bottom navigation icon drawable**/
     @Nullable
     private final Drawable iconDrawable;
+
+    /** bottom navigation title **/
     @StringRes
     private final int title;
 
-    public BottomBarItem(@DrawableRes int iconId, @StringRes int titleId) {
+    public BottomBarItem(int iconId, int title) {
         this.iconId = iconId;
-        this.title = titleId;
+        this.title = title;
         iconDrawable = null;
-        if (iconId == 0) {
-            throw new RuntimeException("Icon must be provided");
+        if(iconId == 0) {
+            throw new RuntimeException("Icone precisa ser mencionado.");
         }
     }
 
-    public BottomBarItem(@NonNull Drawable iconDrawable, @StringRes int titleId) {
+    public BottomBarItem(@Nullable Drawable iconDrawable, @StringRes int titleId) {
+        this.iconId = 0;
         this.iconDrawable = iconDrawable;
         this.title = titleId;
-        this.iconId = 0;
     }
 
-    public BottomBarItem(@NonNull Drawable iconDrawable) {
+    public BottomBarItem(@Nullable Drawable iconDrawable) {
         this(iconDrawable, 0);
     }
 
-    public BottomBarItem(@DrawableRes int iconId) {
+    public BottomBarItem(int iconId) {
         this(iconId, 0);
     }
 
@@ -49,7 +55,7 @@ public class BottomBarItem {
         } else {
             drawable = ContextCompat.getDrawable(context, iconId);
         }
-        //wrapped for tinting
+
         return DrawableCompat.wrap(drawable).mutate();
     }
 
