@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="BottomNavigationBar">
-        <attr name="menu" format="reference"> </attr>
-        <attr name="switchMode" format="enum">
-            <enum name="scale" value="0"></enum>
-            <enum name="shift" value="1"></enum>
-            <enum name="still" value="2"></enum>
-        </attr>
-        <attr name="barElevation" format="dimension"></attr>
-        <attr name="itemBackground" format="reference"></attr>
-        <attr name="selectedColor" format="color"></attr>
-        <attr name="unSelectedColor" format="color"></attr>
-
-<!--        <attr name="fragmentContainerId" format="reference"></attr>-->
-<!--        <attr name="viewpagerId" format="reference"></attr>-->
-        <attr name="isSlide" format="boolean"> </attr>
+        <attr name="menu" format="reference" />
+        <attr name="rzz_textEnabled" format="boolean" />
+        <attr name="inactiveTabColor" format="color"/>
+        <attr name="activeTabColor" format="color"/>
     </declare-styleable>
 </resources>

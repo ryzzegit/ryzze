@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="BottomNavigationView">
-        <item name="barElevation">@dimen/bar_elevation</item>
-        <item name="itemBackground">?attr/selectableItemBackgroundBorderless</item>
+    <style name="BottomBarItem">
+        <item name="android:background">@null</item>
     </style>
 </resources>
