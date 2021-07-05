@@ -12,33 +12,31 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.DrawableCompat;
 
-import static android.view.View.GONE;
-import static com.ryzze.lib.utils.TabAnimator.animateTranslationY;
-
 class Tab {
     private final BottomBarItem item;
     private final View root;
+
     private final TextView title;
     private final Context context;
     private final ImageView icon;
 
-    private final int activeTopMargin;
-    private final int inactiveTopMargin;
     @ColorInt
     private final int activeColor;
+
     @ColorInt
     private final int inactiveColor;
+
     private final Drawable iconDrawable;
 
-    Tab(@NonNull BottomBarItem item, @NonNull View root, @ColorInt int activeColor, @ColorInt int inactiveColor) {
+    Tab(BottomBarItem item, View root, int activeColor, int inactiveColor) {
         this.item = item;
         this.root = root;
+
+        /** pegando id's dos items do bottom bar **/
         context = root.getContext();
         title = (TextView) root.findViewById(R.id.tab_title);
         icon = (ImageView) root.findViewById(R.id.tab_icon);
 
-        activeTopMargin = getSizeInPx(R.dimen.bottom_bar_icon_top_margin_active);
-        inactiveTopMargin = getSizeInPx(R.dimen.bottom_bar_icon_top_margin_inactive);
         this.activeColor = activeColor;
         this.inactiveColor = inactiveColor;
         iconDrawable = item.getIconDrawable(context);
@@ -47,6 +45,7 @@ class Tab {
         setupTitle();
     }
 
+    /** setando o icone **/
     private void setupIcon() {
         DrawableCompat.setTint(iconDrawable, inactiveColor);
         icon.setImageDrawable(iconDrawable);
@@ -56,47 +55,53 @@ class Tab {
         return context.getResources().getDimensionPixelSize(res);
     }
 
+    /** quando selecionado **/
     void select(boolean animate) {
         title.setTextColor(activeColor);
         DrawableCompat.setTint(iconDrawable, activeColor);
         icon.getDrawable().invalidateSelf();
 
+        // ----- animate ----- //
         if (animate) {
-            animateTranslationY(root, activeTopMargin);
+            // null
         } else {
-            root.setTranslationY(activeTopMargin);
+            // null
         }
     }
 
+    /** quando descelecionado **/
     void deselect(boolean animate) {
         title.setTextColor(inactiveColor);
         DrawableCompat.setTint(iconDrawable, inactiveColor);
         icon.getDrawable().invalidateSelf();
 
+        // ----- animate ----- //
+
         if (animate) {
-            animateTranslationY(root, inactiveTopMargin);
+            // null
         } else {
-            root.setTranslationY(inactiveTopMargin);
+            // null
         }
     }
 
+    /** setando o titulo **/
     private void setupTitle() {
         if (item.getTitle() == 0) {
-            title.setVisibility(GONE);
+            title.setVisibility(View.GONE);
         } else {
             title.setText(item.getTitle());
         }
+
         title.setTextColor(inactiveColor);
     }
 
+    // ???
     void showBadge(@NonNull Drawable badge) {
         LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{iconDrawable, badge});
         layerDrawable.setLayerInset(
-                1,
-                iconDrawable.getIntrinsicWidth(),
+                1, iconDrawable.getIntrinsicWidth(),
                 0,
-                0,
-                iconDrawable.getIntrinsicHeight()
+                0, iconDrawable.getIntrinsicHeight()
         );
         icon.setImageDrawable(layerDrawable);
     }

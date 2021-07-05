@@ -4,7 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
 
-class SavedState extends View.BaseSavedState {
+public class SavedState extends View.BaseSavedState {
+
     int selectedPosition;
 
     SavedState(Parcelable superState) {
@@ -22,8 +23,8 @@ class SavedState extends View.BaseSavedState {
         dest.writeInt(selectedPosition);
     }
 
-    public static final Creator<SavedState> CREATOR =
-            new Creator<SavedState>() {
+    public static final Parcelable.Creator<SavedState> CREATOR =
+            new Parcelable.Creator<SavedState>() {
                 @Override
                 public SavedState createFromParcel(Parcel in) {
                     return new SavedState(in);

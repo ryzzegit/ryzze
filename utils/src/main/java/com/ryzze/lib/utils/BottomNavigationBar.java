@@ -72,8 +72,8 @@ public class BottomNavigationBar extends LinearLayout {
         final TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.BottomNavigationBar);
         int defaultInactiveColor = colorToInt(R.color.bottomBarDefaultTextColor);
         int defaultActiveColor = colorToInt(R.color.colorPrimary);
-        inactiveColorId = array.getColor(R.styleable.BottomNavigationBar_inactiveTabColor, defaultInactiveColor);
-        activeColorId = array.getColor(R.styleable.BottomNavigationBar_activeTabColor, defaultActiveColor);
+        inactiveColorId = array.getColor(R.styleable.BottomNavigationBar_inactiveColor, defaultInactiveColor);
+        activeColorId = array.getColor(R.styleable.BottomNavigationBar_activeColor, defaultActiveColor);
         array.recycle();
     }
 
@@ -87,12 +87,6 @@ public class BottomNavigationBar extends LinearLayout {
         return tabs.get(selectedPosition);
     }
 
-    /**
-     * Selects tab, not triggering listener
-     *
-     * @param position position to select
-     * @param animate  indicates whether selection should  be animated
-     */
     public void selectTab(int position, boolean animate) {
         if (position != selectedPosition) {
             getCurrent().deselect(animate);
@@ -149,7 +143,7 @@ public class BottomNavigationBar extends LinearLayout {
     }
 
     public BottomNavigationBar addTab(@NonNull BottomBarItem item) {
-        View tabView = inflater.inflate(R.layout.bottom_bar_item, this, false);
+        View tabView = inflater.inflate(R.layout.xyz_bottom_navigation_item, this, false);
         addView(tabView);
         int position = tabs.size();
         Tab tab = createTab(item, tabView, position);
@@ -251,4 +245,5 @@ public class BottomNavigationBar extends LinearLayout {
     public interface OnReselectListener {
         void onReselect(int position);
     }
+
 }
