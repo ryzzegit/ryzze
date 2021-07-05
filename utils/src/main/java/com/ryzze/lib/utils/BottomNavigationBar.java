@@ -1,534 +1,254 @@
 package com.ryzze.lib.utils;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Looper;
-import android.transition.Fade;
-import android.transition.Slide;
-import android.transition.TransitionManager;
+import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
+import android.view.ViewOutlineProvider;
+import android.widget.LinearLayout;
 
-import androidx.annotation.IdRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
-public class BottomNavigationBar extends FrameLayout{
+import java.util.ArrayList;
+import java.util.List;
 
-    private BottomNavigationBarContent mBottomNavigationBarContent;
-    private int itemBackGroundRes;
-    private int mSwitchMode;
-    private float maxRadius;
-    private float currentRadius=0f;
-    private Paint mPaint;
-    private View circleView;
-    private int activeColor;
-    private int inActiveColor;
-    private boolean isSlide;
-        private boolean isShy;
-    private @IdRes int containerId;
-    private int itemCounts;
-    private int viewpagerId;
-    private ViewPager viewpager;
+public class BottomNavigationBar extends LinearLayout {
 
+    private final List<Tab> tabs = new ArrayList<>(5);
+    private final LayoutInflater inflater = LayoutInflater.from(getContext());
+    @ColorInt
+    private int inactiveColorId;
+    @ColorInt
+    private int activeColorId;
+    private int selectedPosition;
+    private boolean shouldTriggerListenerOnLayout;
+
+    private OnSelectListener onSelectListener = new OnSelectListener() {
+        @Override
+        public void onSelect(int position) {
+        }
+    };
+    private OnReselectListener onReselectListener = new OnReselectListener() {
+        @Override
+        public void onReselect(int position) {
+        }
+    };
 
     public BottomNavigationBar(Context context) {
-        super(context,null);
+        this(context, null);
     }
 
     public BottomNavigationBar(Context context, AttributeSet attrs) {
-        this(context, attrs,0);
+        this(context, attrs, 0);
     }
 
     public BottomNavigationBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if(Build.VERSION.SDK_INT<21){
-
-            View shadowView=new View(context);
-            shadowView.setBackgroundResource(R.drawable.shadow);
-            FrameLayout.LayoutParams layoutParams=new FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT, BarUtils.dip2px(context,1));
-            addView(shadowView,layoutParams);
-        }
-        else {
-            circleView = new View(context);
-            FrameLayout.LayoutParams layoutParams=new FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-            addView(circleView,layoutParams);
-        }
-
-        TypedArray typedArray=context.obtainStyledAttributes(
-                attrs,R.styleable.BottomNavigationBar,defStyleAttr,R.style.BottomNavigationView);
-
-
-        if(typedArray.hasValue(R.styleable.BottomNavigationBar_switchMode)){
-            mSwitchMode=typedArray.getInt(R.styleable.BottomNavigationBar_switchMode,0);
-        }
-
-        if(typedArray.hasValue(R.styleable.BottomNavigationBar_barElevation)){
-            setBackgroundColor(Color.WHITE);
-            ViewCompat.setElevation(
-                    this,typedArray.getDimensionPixelSize(R.styleable.BottomNavigationBar_barElevation,0));
-        }
-
-        /* Fragment Container Id */
-
-//        if(typedArray.hasValue(R.styleable.BottomNavigationBar_fragmentContainerId)){
-//            containerId=typedArray.getResourceId(R.styleable.BottomNavigationBar_fragmentContainerId,0);
-//        }
-
-        /* ----- View Pager ID ----- */
-//        if(typedArray.hasValue(R.styleable.BottomNavigationBar_viewpagerId)){
-//            viewpagerId = typedArray.getResourceId(R.styleable.BottomNavigationBar_viewpagerId,0);
-//            isSlide=(viewpagerId!=0);
-//        }
-
-        itemBackGroundRes = typedArray.getResourceId(R.styleable.BottomNavigationBar_itemBackground, 0);
-        activeColor = typedArray.getColor(R.styleable.BottomNavigationBar_selectedColor, BarUtils.getAppColorPrimary(context));
-        inActiveColor = typedArray.getColor(R.styleable.BottomNavigationBar_unSelectedColor, Color.GRAY);
-        isSlide=typedArray.getBoolean(R.styleable.BottomNavigationBar_isSlide,false);
-
-        /* ------ Menu ----- */
-        if(typedArray.hasValue(R.styleable.BottomNavigationBar_menu)){
-            ItemParser parser=new ItemParser(context,getDefaultConfig());
-            parser.parser(typedArray.getResourceId(R.styleable.BottomNavigationBar_menu,0));
-            mBottomNavigationBarContent=new BottomNavigationBarContent(context);
-            itemCounts=parser.getItemCounts();
-            mBottomNavigationBarContent.setSwitchMode(mSwitchMode).setItems(parser.getBottomNavigationItems());
-            FrameLayout.LayoutParams layoutParams=new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-            addView(mBottomNavigationBarContent,layoutParams);
-
-            for(int i=0;i<itemCounts;i++){
-                canChangeBackColor=canChangeBackColor&&(getBottomItem(i).getShiftedColor()!=0);
-            }
-            mBottomNavigationBarContent.setCanChangeBackColor(canChangeBackColor);
-//            mBottomNavigationBarContent.finishInit(parser.getBottomNavigationItems(),viewpagerId!=0,isSlide,canChangeBackColor);
-        }
-        else {
-
-        }
-        typedArray.recycle();
-    }
-    private boolean canChangeBackColor=true;
-
-    boolean isCanChangeBackColor(){
-        return canChangeBackColor;
+        setUpElevation(context, attrs);
+        initFromCustomAttributes(context, attrs);
+        init();
+        createStubForEditMode();
     }
 
-
-    protected boolean isMoving;
-    protected boolean isBackMoving;
-    protected float offset;
-
-    boolean getCanClick(){
-        return !isMoving&&!isBackMoving&offset==0;
+    private void createStubForEditMode() {
+        if (isInEditMode()) {
+            for (int i = 0; i < 4; i++) {
+                addTab(new BottomBarItem(R.drawable.bottom_bar_default_icon));
+            }
+        }
     }
-    private void initViewPager(@IdRes int viewpagerId) {
-        viewpager = (ViewPager) ((Activity) getContext()).findViewById(viewpagerId);
-        viewpager.setEnabled(false);
-        viewpager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
 
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-                offset=positionOffset;
-                if(positionOffset==0f){
+    private void initFromCustomAttributes(@NonNull Context context, @NonNull AttributeSet attrs) {
+        final TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.BottomNavigationBar);
+        int defaultInactiveColor = colorToInt(R.color.bottomBarDefaultTextColor);
+        int defaultActiveColor = colorToInt(R.color.colorPrimary);
+        inactiveColorId = array.getColor(R.styleable.BottomNavigationBar_inactiveTabColor, defaultInactiveColor);
+        activeColorId = array.getColor(R.styleable.BottomNavigationBar_activeTabColor, defaultActiveColor);
+        array.recycle();
+    }
 
-                    if(isSlide){
-                        for(int i=0;i<itemCounts;i++){
-                            if(!getBottomItem(i).isHasCorrect())getBottomItem(i).correctItem(i==position);
-                        }
-                    }
-                }
-                if(positionOffset>0){
+    @ColorInt
+    private int colorToInt(@ColorRes int color) {
+        return ContextCompat.getColor(getContext(), color);
+    }
 
-                    if(isSlide){
-                        startAlphaAnim(position,positionOffset,isMoving);
-                        if(canChangeBackColor)setBackgroundColor(BarUtils.getOffsetColor(positionOffset,getBottomItem(position).getShiftedColor(),getBottomItem(position+1).getShiftedColor(),10));
-                    }
-                }
-            }
+    @NonNull
+    private Tab getCurrent() {
+        return tabs.get(selectedPosition);
+    }
+
+    /**
+     * Selects tab, not triggering listener
+     *
+     * @param position position to select
+     * @param animate  indicates whether selection should  be animated
+     */
+    public void selectTab(int position, boolean animate) {
+        if (position != selectedPosition) {
+            getCurrent().deselect(animate);
+            selectedPosition = position;
+            getCurrent().select(animate);
+        }
+    }
+
+    /**
+     * @return current selected position
+     */
+    public int getSelectedPosition() {
+        return selectedPosition;
+    }
+
+    /**
+     * Selects tab, triggering listener
+     *
+     * @param position position to select
+     * @param animate  indicates wheter selection should  be animated
+     */
+    public void selectTabAndTriggerListener(int position, boolean animate) {
+        if (position != selectedPosition) {
+            onSelectListener.onSelect(position);
+        } else {
+            onReselectListener.onReselect(position);
+        }
+        selectTab(position, animate);
+    }
+
+    /**
+     * Enables or disables automatic invocation of click listener during layout.
+     * Disabled by default.
+     *
+     * @param shouldTrigger indicates whether selection listener should be triggered
+     */
+    public void setTriggerListenerOnLayout(boolean shouldTrigger) {
+        shouldTriggerListenerOnLayout = shouldTrigger;
+    }
+
+    private void setUpElevation(@NonNull Context context, @Nullable AttributeSet attrs) {
+        if (!atLeastLollipop()) {
+            return;
+        }
+
+        int[] set = {android.R.attr.elevation};
+        TypedArray a = context.obtainStyledAttributes(attrs, set);
+
+        int defaultElevation = getResources().getDimensionPixelSize(R.dimen.bottom_bar_elevation);
+        float elevation = a.getDimensionPixelSize(0, defaultElevation);
+        ViewCompat.setElevation(this, elevation);
+
+        a.recycle();
+    }
+
+    public BottomNavigationBar addTab(@NonNull BottomBarItem item) {
+        View tabView = inflater.inflate(R.layout.bottom_bar_item, this, false);
+        addView(tabView);
+        int position = tabs.size();
+        Tab tab = createTab(item, tabView, position);
+        tabs.add(tab);
+        return this;
+    }
+
+    public void setOnSelectListener(@NonNull OnSelectListener listener) {
+        onSelectListener = listener;
+    }
+
+    public void setOnReselectListener(@NonNull OnReselectListener listener) {
+        onReselectListener = listener;
+    }
+
+    public void showBadge(int position, @NonNull Drawable badge) {
+        tabs.get(position).showBadge(badge);
+    }
+
+    public void showBadge(int position, @DrawableRes int badgeRes) {
+        showBadge(position, ContextCompat.getDrawable(getContext(), badgeRes));
+    }
+
+    public void hideBadge(int position) {
+        tabs.get(position).hideBadge();
+    }
+
+    @NonNull
+    private Tab createTab(@NonNull BottomBarItem item, @NonNull View tabView, final int position) {
+        Tab tab = new Tab(item, tabView, activeColorId, inactiveColorId);
+        tabView.setOnClickListener(new OnClickListener() {
             @Override
-            public void onPageScrollStateChanged(int state) {
-                super.onPageScrollStateChanged(state);
-                switch (state){
-                    case 0:
-                        isMoving=false;
-                        isBackMoving=false;
-                        break;
-                    case 1:
-                        isMoving=true;
-                        isBackMoving=false;
-                        break;
-                    case 2:
-                        isMoving=false;
-                        isBackMoving=true;
-                        break;
+            public void onClick(View v) {
+                if (position == selectedPosition) {
+                    onReselectListener.onReselect(position);
+                    return;
                 }
-            }
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                if(isBackMoving){
-                    if(isSlide)getChildView().updatePosition(position);
-                    else {
-                        //非slide模式 表示滑动切换到item时才执行动画 这里不执行背景水滴效果
-                        setItemSelected(position,true,false);
-                        correctBackColor(position);
-                    }
-                }
+                selectTab(position, true);
+                onSelectListener.onSelect(position);
             }
         });
-
-        ((BottomNavigationBarContent) getChildAt(1)).setViewPager(viewpager);
-        PagerAdapter pagerAdapter=new PagerAdapter(((AppCompatActivity) getContext()).getSupportFragmentManager());
-        viewpager.setAdapter(pagerAdapter);
+        return tab;
     }
 
-    void setFirstItemBackgroundColor(int shiftedColor){
-        setBackgroundColor(shiftedColor);
-    }
+    private void init() {
+        int minHeight = getResources().getDimensionPixelSize(R.dimen.bottom_bar_min_height);
+        setMinimumHeight(minHeight);
+        setOrientation(HORIZONTAL);
 
-    /* ----- Default Configs ----- */
-    private BottomNavigationItemWithDot.Config getDefaultConfig() {
-        return new BottomNavigationItemWithDot.Config.Build()
-                .setItemBackGroundRes(itemBackGroundRes)
-                .setSwitchMode(mSwitchMode)
-                .setActiveColor(activeColor)
-                .setInActiveColor(inActiveColor)
-                .setIsSlide(isSlide)
-                .build();
+        if (getBackground() == null) {
+            setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.white));
+        }
+
+        if (atLeastLollipop()) {
+            setOutlineProvider(ViewOutlineProvider.BOUNDS);
+        }
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        widthMeasureSpec=MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec),MeasureSpec.EXACTLY);
-        heightMeasureSpec=MeasureSpec.makeMeasureSpec(BarUtils.dip2px(getContext(),56),MeasureSpec.EXACTLY);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    void drawBackgroundCircle(int shiftedColor,float x,float y) {
-//        if(mSwitchMode!=1)return;
-        if(currentRadius==0f)currentRadius=BarUtils.dip2px(getContext(),10);
-        if(maxRadius==0f)maxRadius = (float) Math.sqrt(getMeasuredHeight()*getMeasuredHeight()+getMeasuredWidth()*getMeasuredWidth());
-        if(Build.VERSION.SDK_INT<21){
-            drawLowVersionCircle(shiftedColor,x,y);
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        if (tabs.size() == 0) {
+            return;
         }
-        else {
-            prepareForBackgroundColorAnimation(shiftedColor);
-            drawHighVersionCircle(shiftedColor,(int)x,(int)y);
+        getCurrent().select(false);
+        if (shouldTriggerListenerOnLayout) {
+            onSelectListener.onSelect(selectedPosition);
         }
     }
 
-    /* ------ idk ------*/
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void drawHighVersionCircle(final int shiftedColor, final int x, final int y) {
-        if(isInflated){
-            final Animator animator = ViewAnimationUtils.createCircularReveal(
-                    circleView,
-                    x,
-                    y,
-                    currentRadius,
-                    maxRadius
-            );
-            animator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    onEnd();
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-                    onEnd();
-                }
-
-                private void onEnd() {
-                    animator.removeListener(this);
-                    setBackgroundColor(shiftedColor);
-                    circleView.setVisibility(View.INVISIBLE);
-                    ViewCompat.setAlpha(circleView, 1);
-                }
-            });
-            animator.start();
-        }
-        else circleView.post(new Runnable() {
-            @Override
-            public void run() {
-                final Animator animator = ViewAnimationUtils.createCircularReveal(
-                        circleView,
-                        x,
-                        y,
-                        currentRadius,
-                        maxRadius
-                );
-                animator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        onEnd();
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-                        onEnd();
-                    }
-
-                    private void onEnd() {
-                        animator.removeListener(this);
-                        setBackgroundColor(shiftedColor);
-                        circleView.setVisibility(View.INVISIBLE);
-                        ViewCompat.setAlpha(circleView, 1);
-                    }
-                });
-                animator.start();
-            }
-        });
-    }
-
-    private void prepareForBackgroundColorAnimation(int newColor) {
-        circleView.clearAnimation();
-        circleView.setBackgroundColor(newColor);
-        circleView.setVisibility(View.VISIBLE);
-    }
-    private float downX;
-    private float downY;
-    private void drawLowVersionCircle(int shiftedColor,float x,float y) {
-        downX=x;
-        downY=y;
-        this.shiftedColor=shiftedColor;
-        isStart=true;
-        refreshView();
-    }
-
-    private void refreshView() {
-        if(Looper.getMainLooper()== Looper.myLooper())invalidate();
-        else postInvalidate();
-    }
-
-    private int shiftedColor;
-    private boolean isStart;
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        if(isStart){
-            initPaint();
-            mPaint.setColor(shiftedColor);
-            if(currentRadius<maxRadius){
-                currentRadius+=currentRadius+maxRadius/30;
-                canvas.drawCircle(downX,downY,currentRadius,mPaint);
-                refreshView();
-            }
-            else{
-                isStart=false;
-                currentRadius=0f;
-                setBackgroundColor(shiftedColor);
-                canvas.drawRect(0,0,getMeasuredWidth(),getMeasuredHeight(),mPaint);
-            }
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (!(state instanceof SavedState)) {
+            super.onRestoreInstanceState(state);
+            return;
         }
+
+        SavedState ss = (SavedState) state;
+        selectedPosition = ss.selectedPosition;
+        super.onRestoreInstanceState(ss.getSuperState());
     }
 
-    private void initPaint() {
-        if(mPaint==null){
-            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        }
-    }
-
-    private void startAlphaAnim(int position, float positionOffset, boolean isMoving) {
-        ((BottomNavigationBarContent) getChildAt(1)).startAlphaAnim(position,positionOffset,isMoving);
-    }
-
-
-
-    private boolean isInflated;
     @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-
-        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-            @Override
-            public void onGlobalLayout() {
-                getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                isInflated=true;
-                /* View Pager Id */
-                if(viewpagerId!=0){
-                    try {
-                        initViewPager(viewpagerId);
-
-                    }
-                    catch (Exception e){
-                        throw new RuntimeException("you need provide a fragment packageName in menu's xml");
-                    }
-                }
-            }
-        });
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.selectedPosition = selectedPosition;
+        return ss;
     }
 
-    public void disMissNum(int position) {
-        ((BottomNavigationItemWithDot) ((BottomNavigationBarContent) getChildAt(1)).getChildAt(position)).disMissMes();
+    private boolean atLeastLollipop() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
-
-    public void correctBackColor() {
-
-        setBackgroundColor(getBottomItem(getChildView().getActivePosition()).getShiftedColor());
+    public interface OnSelectListener {
+        void onSelect(int position);
     }
 
-    public void correctBackColor(int position) {
-
-        if(canChangeBackColor)setBackgroundColor(getBottomItem(position).getShiftedColor());
-    }
-    public interface OnNavigationItemSelectedListener {
-
-        boolean onNavigationItemSelected(@NonNull BottomNavigationItemWithDot item, int selectedPosition);
-
-        void onNavigationItemSelectedAgain(@NonNull BottomNavigationItemWithDot item,int reSelectedPosition);
-    }
-
-    public void setOnNavigationItemSelectedListener(
-            @Nullable OnNavigationItemSelectedListener listener) {
-
-
-        mBottomNavigationBarContent.injectListener(listener);
-    }
-
-    public void setItemSelected(final int position, final boolean isAnim){
-        if(position<0||position>itemCounts-1){
-            throw new RuntimeException("the range of position is 0-"+(itemCounts-1));
-        }
-        if(isInflated){
-            setItemSelected(position,isAnim,false);
-            correctBackColor(position);
-            if(viewpager!=null){
-                viewpager.setCurrentItem(position,false);
-            }
-        }
-        else {
-            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    }
-                    setItemSelected(position,isAnim,false);
-                    correctBackColor(position);
-                    if(viewpager!=null){
-                        viewpager.setCurrentItem(position,false);
-                    }
-                }
-            });
-        }
-
-    }
-
-
-    private void setItemSelected(int position,boolean isAnim,boolean isCanBackWave){
-        getChildView().setItemSelected(position,isAnim,isCanBackWave);
-    }
-    public void hideBar(){
-        if(getVisibility()==INVISIBLE)return;
-        TransitionManager.beginDelayedTransition(this,new Slide());
-        setVisibility(INVISIBLE);
-    }
-    public void hideBar(int mode){
-        if(getVisibility()==INVISIBLE)return;
-        TransitionManager.beginDelayedTransition(this,new Fade().setDuration(700));
-        setVisibility(INVISIBLE);
-    }
-    public void showBar(){
-        if(getVisibility()==VISIBLE)return;
-        TransitionManager.beginDelayedTransition(this,new Slide());
-        setVisibility(VISIBLE);
-    }
-
-    public void showBar(int mode){
-        if(getVisibility()==VISIBLE)return;
-        TransitionManager.beginDelayedTransition(this,new Fade().setDuration(700));
-        setVisibility(VISIBLE);
-    }
-
-    public void showNum(int position,int num) {
-//        hasMesPoint = true;
-        ((BottomNavigationItemWithDot) ((BottomNavigationBarContent) getChildAt(1)).getChildAt(position)).showNum(num);
-    }
-
-    @IdRes int getContainerId(){
-        return containerId;
-    }
-
-    class PagerAdapter extends FragmentPagerAdapter {
-
-        public PagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return getBottomItem(position).getFragment();
-        }
-
-        @Override
-        public int getCount() {
-            return itemCounts;
-        }
-
-    }
-
-    private BottomNavigationItemWithDot getBottomItem(int position){
-
-        return  ((BottomNavigationItemWithDot) ((BottomNavigationBarContent) getChildAt(1)).getChildAt(position));
-    }
-
-    private BottomNavigationBarContent getChildView(){
-        return ((BottomNavigationBarContent) getChildAt(1));
-    }
-
-    public Fragment getFragment(int position){
-        return getBottomItem(position).getFragment();
-    }
-
-    /* ----- View Pager Id ----- */
-    public ViewPager getViewPager(){
-        if(viewpagerId!=0&&viewpager!=null){
-            return viewpager;
-        }
-        else return null;
-    }
-
-    public void setTitle(final int position, final String title){
-
-        if(isInflated){
-            getBottomItem(position).changeTitle(title);
-        }
-        else {
-            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    }
-                    getBottomItem(position).changeTitle(title);
-                }
-            });
-        }
+    public interface OnReselectListener {
+        void onReselect(int position);
     }
 }
