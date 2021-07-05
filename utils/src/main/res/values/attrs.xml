@@ -12,8 +12,8 @@
         <attr name="selectedColor" format="color"></attr>
         <attr name="unSelectedColor" format="color"></attr>
 
-        <attr name="fragmentContainerId" format="reference"></attr>
-        <attr name="viewpagerId" format="reference"></attr>
+<!--        <attr name="fragmentContainerId" format="reference"></attr>-->
+<!--        <attr name="viewpagerId" format="reference"></attr>-->
         <attr name="isSlide" format="boolean"> </attr>
     </declare-styleable>
 </resources>

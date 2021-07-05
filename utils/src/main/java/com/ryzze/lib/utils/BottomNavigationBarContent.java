@@ -62,11 +62,9 @@ class BottomNavigationBarContent extends LinearLayout {
         mOnClickListener = new OnClickListener() {
             @Override
             public void onClick(View v) {
-//                boolean flag=true;
                 BottomNavigationItemWithDot item = (BottomNavigationItemWithDot) v;
                 if(mListener==null|| (mListener!=null&&mListener.onNavigationItemSelected(item,item.getPosition()))){
                     if(System.currentTimeMillis()-LIMIT_OF_CLICK>=150L) {
-                        //when is sliding,it can not been clicked
                         if(viewPager==null){
                             setItemSelected(item.getPosition(),true,true);
                         }
@@ -106,7 +104,6 @@ class BottomNavigationBarContent extends LinearLayout {
         }
 
         int shiftedColor = ( ((BottomNavigationItemWithDot) getChildAt(position))).getShiftedColor();
-        //只有每个item都设置了shfitColor才会由背景点击切换
         if(canChangeBackColor&&isCanBackWave){
 
             ((BottomNavigationBar) getParent()).drawBackgroundCircle(shiftedColor,downX,downY);
@@ -126,14 +123,6 @@ class BottomNavigationBarContent extends LinearLayout {
         mActivePosition=position;
         return;
 
-
-
-//        mActivePosition=position;
-//        for(int i=0;i<getChildCount();i++)
-//        {
-//            final BottomNavigationItemWithDot item = ((BottomNavigationItemWithDot) getChildAt(i));
-//            item.setSelected(i==position,isAnim);
-//        }
     }
 
     void updatePosition(int mActivePosition){
@@ -156,24 +145,12 @@ class BottomNavigationBarContent extends LinearLayout {
     private float downX;
     private float downY;
 
-    //onTouchEvent 除非被拦截或者子view不处理才会调用
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        if(event.getAction()==MotionEvent.ACTION_DOWN){
-//            downX=event.getRawX();
-//            downY=event.getRawY();
-//        }
-//        return super.onTouchEvent(event);
-//    }
-
-
     void setItems(List<BottomNavigationItemWithDot> bottomNavigationItems){
         setOrientation(HORIZONTAL);
         setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,mBottomNavigationBarHeight));
         counts = bottomNavigationItems.size();
         widthSpec = new int[counts];
         int screenWidth=BarUtils.getDeviceWidth(getContext());
-//        int heightSpec=MeasureSpec.makeMeasureSpec(mBottomNavigationBarHeight,MeasureSpec.EXACTLY);
 
         int remain_activeMax;
         int activeItem;
@@ -189,8 +166,7 @@ class BottomNavigationBarContent extends LinearLayout {
             inActiveItem=Math.min(mInactiveItemMaxWidth,remain_inActiveMax);
 
             remain=screenWidth-activeItem-(counts -1)*inActiveItem;
-        }
-        else {
+        } else {
             remain_activeMax=screenWidth/ counts;
             activeItem=Math.min(mActiveItemMaxWidth,remain_activeMax);
             inActiveItem=activeItem;
@@ -214,11 +190,7 @@ class BottomNavigationBarContent extends LinearLayout {
                     widthSpec[i],mBottomNavigationBarHeight);
             item.setLayoutParams(layoutParams);
             addView(item);
-//            if(i==mActivePosition)
-
-
         }
-//        setItemSelected(0,true);
     }
     private ViewPager viewPager;
 

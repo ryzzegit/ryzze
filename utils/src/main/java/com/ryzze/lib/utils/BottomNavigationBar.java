@@ -47,7 +47,7 @@ public class BottomNavigationBar extends FrameLayout{
     //    private boolean isShy;
     private @IdRes int containerId;
     private int itemCounts;
-    private int viewpagerId;
+//    private int viewpagerId;
     private ViewPager viewpager;
 
 
@@ -90,22 +90,24 @@ public class BottomNavigationBar extends FrameLayout{
                     this,typedArray.getDimensionPixelSize(R.styleable.BottomNavigationBar_barElevation,0));
         }
 
-        if(typedArray.hasValue(R.styleable.BottomNavigationBar_fragmentContainerId)){
-            containerId=typedArray.getResourceId(R.styleable.BottomNavigationBar_fragmentContainerId,0);
-        }
+        /* Fragment Container Id */
 
-        if(typedArray.hasValue(R.styleable.BottomNavigationBar_viewpagerId)){
-            viewpagerId = typedArray.getResourceId(R.styleable.BottomNavigationBar_viewpagerId,0);
-            isSlide=(viewpagerId!=0);
-//            if(viewpagerId!=0)getBottomItem()
-        }
+//        if(typedArray.hasValue(R.styleable.BottomNavigationBar_fragmentContainerId)){
+//            containerId=typedArray.getResourceId(R.styleable.BottomNavigationBar_fragmentContainerId,0);
+//        }
+
+        /* ----- View Pager ID ----- */
+//        if(typedArray.hasValue(R.styleable.BottomNavigationBar_viewpagerId)){
+//            viewpagerId = typedArray.getResourceId(R.styleable.BottomNavigationBar_viewpagerId,0);
+//            isSlide=(viewpagerId!=0);
+//        }
 
         itemBackGroundRes = typedArray.getResourceId(R.styleable.BottomNavigationBar_itemBackground, 0);
         activeColor = typedArray.getColor(R.styleable.BottomNavigationBar_selectedColor, BarUtils.getAppColorPrimary(context));
         inActiveColor = typedArray.getColor(R.styleable.BottomNavigationBar_unSelectedColor, Color.GRAY);
         isSlide=typedArray.getBoolean(R.styleable.BottomNavigationBar_isSlide,false);
-//        isShy=typedArray.getBoolean(R.styleable.BottomNavigationBar_isShy,false);
 
+        /* ------ Menu ----- */
         if(typedArray.hasValue(R.styleable.BottomNavigationBar_menu)){
             ItemParser parser=new ItemParser(context,getDefaultConfig());
             parser.parser(typedArray.getResourceId(R.styleable.BottomNavigationBar_menu,0));
@@ -119,7 +121,7 @@ public class BottomNavigationBar extends FrameLayout{
                 canChangeBackColor=canChangeBackColor&&(getBottomItem(i).getShiftedColor()!=0);
             }
             mBottomNavigationBarContent.setCanChangeBackColor(canChangeBackColor);
-            mBottomNavigationBarContent.finishInit(parser.getBottomNavigationItems(),viewpagerId!=0,isSlide,canChangeBackColor);
+//            mBottomNavigationBarContent.finishInit(parser.getBottomNavigationItems(),viewpagerId!=0,isSlide,canChangeBackColor);
         }
         else {
 
@@ -187,8 +189,6 @@ public class BottomNavigationBar extends FrameLayout{
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 if(isBackMoving){
-//                    setItemSelected(position,false);
-                    //不在此选中item，只是更新activePosition
                     if(isSlide)getChildView().updatePosition(position);
                     else {
                         //非slide模式 表示滑动切换到item时才执行动画 这里不执行背景水滴效果
@@ -207,6 +207,8 @@ public class BottomNavigationBar extends FrameLayout{
     void setFirstItemBackgroundColor(int shiftedColor){
         setBackgroundColor(shiftedColor);
     }
+
+    /* ----- Default Configs ----- */
     private BottomNavigationItemWithDot.Config getDefaultConfig() {
         return new BottomNavigationItemWithDot.Config.Build()
                 .setItemBackGroundRes(itemBackGroundRes)
@@ -236,6 +238,8 @@ public class BottomNavigationBar extends FrameLayout{
             drawHighVersionCircle(shiftedColor,(int)x,(int)y);
         }
     }
+
+    /* ------ idk ------*/
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void drawHighVersionCircle(final int shiftedColor, final int x, final int y) {
         if(isInflated){
@@ -298,9 +302,6 @@ public class BottomNavigationBar extends FrameLayout{
             }
         });
     }
-//    private void startCircle(final int x, final int y){
-//
-//    }
 
     private void prepareForBackgroundColorAnimation(int newColor) {
         circleView.clearAnimation();
@@ -368,15 +369,16 @@ public class BottomNavigationBar extends FrameLayout{
             public void onGlobalLayout() {
                 getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 isInflated=true;
-                if(viewpagerId!=0){
-                    try {
-                        initViewPager(viewpagerId);
-
-                    }
-                    catch (Exception e){
-                        throw new RuntimeException("you need provide a fragment packageName in menu's xml");
-                    }
-                }
+                /* View Pager Id */
+//                if(viewpagerId!=0){
+//                    try {
+//                        initViewPager(viewpagerId);
+//
+//                    }
+//                    catch (Exception e){
+//                        throw new RuntimeException("you need provide a fragment packageName in menu's xml");
+//                    }
+//                }
             }
         });
     }
@@ -386,19 +388,11 @@ public class BottomNavigationBar extends FrameLayout{
     }
 
 
-    /**
-     * 滑动渐变结束校正
-     */
     public void correctBackColor() {
 
         setBackgroundColor(getBottomItem(getChildView().getActivePosition()).getShiftedColor());
     }
 
-
-    /**
-     * 设置背景色为item position的color
-     * @param position
-     */
     public void correctBackColor(int position) {
 
         if(canChangeBackColor)setBackgroundColor(getBottomItem(position).getShiftedColor());
@@ -417,13 +411,6 @@ public class BottomNavigationBar extends FrameLayout{
         mBottomNavigationBarContent.injectListener(listener);
     }
 
-
-
-
-    /**
-     * set buy user
-     * @param position
-     */
     public void setItemSelected(final int position, final boolean isAnim){
         if(position<0||position>itemCounts-1){
             throw new RuntimeException("the range of position is 0-"+(itemCounts-1));
@@ -519,12 +506,13 @@ public class BottomNavigationBar extends FrameLayout{
         return getBottomItem(position).getFragment();
     }
 
-    public ViewPager getViewPager(){
-        if(viewpagerId!=0&&viewpager!=null){
-            return viewpager;
-        }
-        else return null;
-    }
+    /* ----- View Pager Id ----- */
+//    public ViewPager getViewPager(){
+//        if(viewpagerId!=0&&viewpager!=null){
+//            return viewpager;
+//        }
+//        else return null;
+//    }
 
     public void setTitle(final int position, final String title){
 
