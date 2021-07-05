@@ -44,10 +44,10 @@ public class BottomNavigationBar extends FrameLayout{
     private int activeColor;
     private int inActiveColor;
     private boolean isSlide;
-    //    private boolean isShy;
+        private boolean isShy;
     private @IdRes int containerId;
     private int itemCounts;
-//    private int viewpagerId;
+    private int viewpagerId;
     private ViewPager viewpager;
 
 
@@ -370,15 +370,15 @@ public class BottomNavigationBar extends FrameLayout{
                 getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 isInflated=true;
                 /* View Pager Id */
-//                if(viewpagerId!=0){
-//                    try {
-//                        initViewPager(viewpagerId);
-//
-//                    }
-//                    catch (Exception e){
-//                        throw new RuntimeException("you need provide a fragment packageName in menu's xml");
-//                    }
-//                }
+                if(viewpagerId!=0){
+                    try {
+                        initViewPager(viewpagerId);
+
+                    }
+                    catch (Exception e){
+                        throw new RuntimeException("you need provide a fragment packageName in menu's xml");
+                    }
+                }
             }
         });
     }
@@ -507,12 +507,12 @@ public class BottomNavigationBar extends FrameLayout{
     }
 
     /* ----- View Pager Id ----- */
-//    public ViewPager getViewPager(){
-//        if(viewpagerId!=0&&viewpager!=null){
-//            return viewpager;
-//        }
-//        else return null;
-//    }
+    public ViewPager getViewPager(){
+        if(viewpagerId!=0&&viewpager!=null){
+            return viewpager;
+        }
+        else return null;
+    }
 
     public void setTitle(final int position, final String title){
 
