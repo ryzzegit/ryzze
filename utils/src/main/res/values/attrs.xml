@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="BottomNavigationBar">
-        <!-- Menu -->
-        <attr name="menu" format="reference" />
         <!-- Options -->
         <attr name="iconSize" format="dimension" />
         <attr name="activeColor" format="color" />

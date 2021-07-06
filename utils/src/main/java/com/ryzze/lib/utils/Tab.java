@@ -27,6 +27,7 @@ class Tab {
     private final int inactiveColor;
 
     private final Drawable iconDrawable;
+    private final Drawable outlineDrawable;
 
     Tab(BottomBarItem item, View root, int activeColor, int inactiveColor) {
         this.item = item;
@@ -41,6 +42,10 @@ class Tab {
         this.inactiveColor = inactiveColor;
         iconDrawable = item.getIconDrawable(context);
 
+        // outline drawable
+        outlineDrawable = item.getOutlineDrawable(context);
+
+
         setupIcon();
         setupTitle();
     }
@@ -48,7 +53,9 @@ class Tab {
     /** setando o icone **/
     private void setupIcon() {
         DrawableCompat.setTint(iconDrawable, inactiveColor);
+        DrawableCompat.setTint(outlineDrawable, inactiveColor);
         icon.setImageDrawable(iconDrawable);
+
     }
 
     private int getSizeInPx(@DimenRes int res) {
@@ -58,7 +65,7 @@ class Tab {
     /** quando selecionado **/
     void select(boolean animate) {
         title.setTextColor(activeColor);
-        DrawableCompat.setTint(iconDrawable, activeColor);
+        DrawableCompat.setTint(outlineDrawable, activeColor);
         icon.getDrawable().invalidateSelf();
 
         // ----- animate ----- //
