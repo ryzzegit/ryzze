@@ -60,6 +60,7 @@ class Tab {
     /** quando selecionado **/
     void select(boolean animate) {
         title.setTextColor(activeColor);
+        DrawableCompat.setTint(iconDrawable, activeColor);
         icon.getDrawable().invalidateSelf();
 
         // ----- animate ----- //
